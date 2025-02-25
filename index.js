@@ -1,55 +1,65 @@
+require('dotenv').config(); // Load environment variables
 const express = require('express');
 const axios = require('axios');
+const bodyParser = require('body-parser');
+
 const app = express();
-app.use(express.json());
+app.use(bodyParser.json());
 
-// Basic Health Check
+// Health Check Endpoint
 app.get('/', (req, res) => {
-  res.send('Fax Service Running');
+  res.status(200).send('Fax Service is running');
 });
 
-// SFMC Configuration
-app.get('/config.json', (req, res) => {
-  res.json({
-    "type": "FAX",
-    "name": "Send Fax",
-    "schema": {
-      "arguments": {
-        "execute": {
-          "inArguments": [{
-            "faxNumber": "{{Contact.Default.Phone}}",
-            "message": "Hello {{Contact.Attribute.FirstName}}"
-          }]
-        }
-      }
-    }
-  });
-});
-
-// Fax Sending Endpoint
+// Execute Endpoint (Send Fax)
 app.post('/execute', async (req, res) => {
   try {
+    // Extract faxNumber and message from the request
     const { faxNumber, message } = req.body.inArguments[0];
-    
-    // Send fax via Retarus
-    const response = await axios.post('https://api.retarus.com/fax/v4/jobs', {
-      number: faxNumber,
-      documents: [{
-        content: Buffer.from(message).toString('base64'),
-        name: "fax.txt"
-      }]
-    }, {
-      auth: {
-        username: process.env.RETARUS_USERNAME,
-        password: process.env.RETARUS_PASSWORD
+
+    // Validate input
+    if (!faxNumber || !message) {
+      return res.status(400).json({ error: 'faxNumber and message are required' });
+    }
+
+    // Send fax via Retarus API
+    const response = await axios.post(
+      process.env.RETARUS_API_URL, // Retarus API URL from env
+      {
+        number: faxNumber,
+        documents: [{
+          content: Buffer.from(message).toString('base64'),
+          name: "fax.txt"
+        }]
+      },
+      {
+        auth: {
+          username: process.env.RETARUS_USERNAME,
+          password: process.env.RETARUS_PASSWORD
+        },
+        headers: {
+          "Authorization": `Basic ${Buffer.from(`${process.env.RETARUS_USERNAME}:${process.env.RETARUS_PASSWORD}`).toString('base64')}`
+        }
       }
+    );
+
+    console.log('Fax sent successfully:', response.data);
+    res.status(200).json({
+      status: "success",
+      jobId: response.data.jobId
     });
 
-    res.json({ success: true, jobId: response.data.jobId });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error sending fax:', error.message);
+    res.status(500).json({
+      status: "error",
+      message: error.response?.data || error.message
+    });
   }
 });
 
+// Start the server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
