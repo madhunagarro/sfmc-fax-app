@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config(); // Load environment variables
 const express = require('express');
 const axios = require('axios');
 const bodyParser = require('body-parser');
@@ -6,9 +6,9 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
-// Health Check
+// Health Check Endpoint
 app.get('/', (req, res) => {
-  res.status(200).send('Fax Service Running');
+  res.status(200).send('Fax Service is running');
 });
 
 // SFMC Configuration Endpoint
@@ -22,8 +22,7 @@ app.get('/config.json', (req, res) => {
           "inArguments": [
             {
               "faxNumber": "{{Contact.Attribute.FaxNumber}}", // Map to SFMC Contact attribute
-              "message": "{{Contact.Attribute.Message}}",     // Dynamic message from SFMC
-              "templateName": "DefaultTemplate"               // Optional template identifier
+              "message": "{{Contact.Attribute.Message}}"      // Dynamic message from SFMC
             }
           ]
         }
@@ -32,11 +31,11 @@ app.get('/config.json', (req, res) => {
   });
 });
 
-// Execute Endpoint
+// Execute Endpoint (Send Fax)
 app.post('/execute', async (req, res) => {
   try {
     // Extract data from SFMC Contact
-    const { faxNumber, message, templateName } = req.body.inArguments[0];
+    const { faxNumber, message } = req.body.inArguments[0];
 
     // Validate input
     if (!faxNumber || !message) {
@@ -45,26 +44,22 @@ app.post('/execute', async (req, res) => {
 
     // Build Retarus API payload
     const payload = {
-      reference: {
-        customerDefinedId: `SFMC_${Date.now()}`, // Unique identifier for tracking
-        billingCode: "SFMC_CAMPAIGN",            // Optional billing code
-      },
-      recipients: [{
-        number: faxNumber,
-        properties: [
-          { key: "message", value: message }
-        ]
-      }],
-      renderingOptions: {
-        coverpageTemplate: {
-          template: "BASE64_ENCODED_TEMPLATE" // Replace with your Retarus template
+      recipients: [
+        {
+          number: faxNumber
         }
-      }
+      ],
+      documents: [
+        {
+          name: "faxdocument.txt",
+          data: Buffer.from(message).toString('base64') // Encode message as base64
+        }
+      ]
     };
 
     // Send fax via Retarus API
     const response = await axios.post(
-      process.env.RETARUS_API_URL,
+      process.env.RETARUS_API_URL, // Retarus API URL from env
       payload,
       {
         auth: {
@@ -78,13 +73,15 @@ app.post('/execute', async (req, res) => {
       }
     );
 
+    console.log('Fax sent successfully:', response.data);
     res.status(200).json({
       status: "success",
-      jobId: response.data.JobId // Retarus Job ID for tracking
+      jobId: response.data.jobId // Retarus Job ID for tracking
     });
 
   } catch (error) {
     console.error("Error sending fax:", error.message);
+    console.error("Error details:", error.response?.data || error.stack);
     res.status(500).json({
       status: "error",
       message: error.response?.data || error.message
