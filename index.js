@@ -1,8 +1,10 @@
 const express = require('express');
 const path = require('path');
-const app = express();
+const axios = require('axios');
+const bodyParser = require('body-parser');
 
-// Serve static files (HTML, CSS, JS)
+const app = express();
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Configuration Endpoint
