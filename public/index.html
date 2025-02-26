@@ -27,6 +27,9 @@
           }
         }, '*');
       });
+
+      // Request initial data from SFMC
+      window.parent.postMessage({ type: 'ready' }, '*');
     });
   </script>
 </head>
