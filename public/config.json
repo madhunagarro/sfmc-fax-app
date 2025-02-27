@@ -14,15 +14,19 @@
   "arguments": {
     "execute": {
       "inArguments": [
-        { "faxNumber": "" },
-        { "documentUrl": "" }
+        { "faxNumber": "{{Event.FaxNumber}}" },
+        { "documentUrl": "{{Event.DocumentUrl}}" }
       ],
-      "outArguments": [],
-      "timeout": 10000,
-      "retryCount": 1
+      "outArguments": [
+        { "faxStatus": "" }
+      ],
+      "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/execute"
     }
   },
   "configurationArguments": {
+    "save": {
+      "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/save"
+    },
     "publish": {
       "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/publish"
     },

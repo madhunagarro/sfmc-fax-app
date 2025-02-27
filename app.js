@@ -13,18 +13,18 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// Serve `config.json` correctly
+// ✅ Explicitly serve `config.json`
 app.get('/config.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'config.json'));
 });
 
-// Ensure images load properly
+// ✅ Ensure images load properly
 app.use('/images', express.static(path.join(__dirname, 'public/images')));
 
-// Serve JS files correctly
+// ✅ Serve JS files correctly
 app.use('/js', express.static(path.join(__dirname, 'public/js')));
 
-// Serve `index.html`
+// ✅ Serve `index.html`
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 });
