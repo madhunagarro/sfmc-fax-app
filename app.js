@@ -1,35 +1,35 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS
-app.use(cors());
-
-// Middleware for parsing JSON requests
 app.use(bodyParser.json());
 
-// ✅ Serve static files from 'public' directory
+// ✅ Serve static files (index.html, config.json, images, JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ✅ Serve config.json explicitly (important for SFMC)
+// ✅ Register journey activity routes
+const journeyRoutes = require('./routes/journey');
+app.use('/journey', journeyRoutes);
+
+// ✅ Default route (Serves index.html)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// ✅ Serve config.json properly
 app.get('/config.json', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'config.json'));
 });
 
-// ✅ Serve customActivity.js explicitly
-app.get('/js/customActivity.js', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/js/customActivity.js'));
+// ✅ Handle 404 errors
+app.use((req, res) => {
+    res.status(404).send('Page Not Found');
 });
 
-// Import routes for Journey activity
-const journeyRoutes = require('./routes/journey');
-app.use('/journey', journeyRoutes);
-
-// Start server
+// Start the server
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
