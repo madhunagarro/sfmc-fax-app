@@ -1,39 +1,31 @@
-define(["postmonger"], function (Postmonger) {
-    "use strict";
-  
-    var connection = new Postmonger.Session();
-    var payload = {};
-    var steps = [{ label: "Step 1", key: "step1" }];
-    var currentStep = steps[0].key;
-  
-    $(window).ready(onRender);
-  
-    connection.on("initActivity", initialize);
-    connection.on("clickedNext", onClickedNext);
-    connection.on("clickedBack", onClickedBack);
-    connection.on("gotoStep", onGotoStep);
-  
-    function onRender() {
-      connection.trigger("ready");
-    }
-  
-    function initialize(data) {
-      if (data) {
-        payload = data;
-      }
-      connection.trigger("updateButton", { button: "next", enabled: true });
-    }
-  
-    function onClickedNext() {
-      connection.trigger("nextStep");
-    }
-  
-    function onClickedBack() {
-      connection.trigger("prevStep");
-    }
-  
-    function onGotoStep(step) {
-      currentStep = step;
-    }
+define(["postmonger"], function(Postmonger) {
+  "use strict";
+
+  var connection = new Postmonger.Session();
+  var payload = {};
+
+  $(window).ready(function() {
+    connection.trigger("ready");
+    connection.trigger("requestTokens");
+    connection.trigger("requestEndpoints");
   });
-  
+
+  connection.on("initActivity", function(data) {
+    if (data) {
+      payload = data;
+    }
+
+    console.log("Custom Activity Initialized:", payload);
+  });
+
+  connection.on("clickedNext", function() {
+    payload["arguments"].execute.inArguments = [
+      {
+        "faxNumber": $("#faxNumber").val(),
+        "documentUrl": $("#documentUrl").val()
+      }
+    ];
+    payload["metaData"].isConfigured = true;
+    connection.trigger("updateActivity", payload);
+  });
+});

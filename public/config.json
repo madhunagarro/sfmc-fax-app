@@ -7,8 +7,8 @@
     "type": "REST",
     "lang": {
       "en-US": {
-        "name": "Fax via Retarus",
-        "description": "Sends a fax using Retarus Fax API."
+        "name": "Send Fax via Retarus",
+        "description": "This activity sends a fax using Retarus API."
       }
     },
     "arguments": {
@@ -18,12 +18,20 @@
             "faxNumber": "{{Contact.Attribute.FaxNumber}}"
           },
           {
-            "documentUrl": "{{Contact.Attribute.DocumentURL}}"
+            "documentUrl": "{{Contact.Attribute.DocumentUrl}}"
+          }
+        ],
+        "outArguments": [
+          {
+            "retarusJobId": ""
+          },
+          {
+            "faxStatus": ""
           }
         ],
         "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/execute",
-        "verb": "POST",
-        "format": "json"
+        "timeout": 10000,
+        "retryCount": 1
       }
     },
     "configurationArguments": {
@@ -38,6 +46,51 @@
       },
       "stop": {
         "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/stop"
+      }
+    },
+    "userInterfaces": {
+      "configModal": {
+        "height": 200,
+        "width": 300,
+        "fullscreen": true
+      }
+    },
+    "schema": {
+      "arguments": {
+        "execute": {
+          "inArguments": [
+            {
+              "faxNumber": {
+                "dataType": "Text",
+                "isNullable": false,
+                "direction": "in"
+              }
+            },
+            {
+              "documentUrl": {
+                "dataType": "Text",
+                "isNullable": false,
+                "direction": "in"
+              }
+            }
+          ],
+          "outArguments": [
+            {
+              "retarusJobId": {
+                "dataType": "Text",
+                "isNullable": true,
+                "direction": "out"
+              }
+            },
+            {
+              "faxStatus": {
+                "dataType": "Text",
+                "isNullable": true,
+                "direction": "out"
+              }
+            }
+          ]
+        }
       }
     }
   }
