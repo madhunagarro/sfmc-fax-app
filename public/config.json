@@ -1,14 +1,14 @@
 {
   "workflowApiVersion": "1.1",
   "metaData": {
-    "icon": "images/icon.png",
+    "icon": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/images/icon.png",
     "category": "custom"
   },
   "type": "REST",
   "lang": {
     "en-US": {
       "name": "Send Fax",
-      "description": "Sends a fax via Retarus"
+      "description": "Sends a fax via Retarus API"
     }
   },
   "arguments": {
