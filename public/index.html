@@ -3,44 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom Journey Activity</title>
-
-    <!-- ✅ Load jQuery and RequireJS from CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <title>SFMC Custom Activity</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
-
-    <!-- ✅ Load Postmonger from your own hosted `/js/postmonger.js` -->
-    <script src="https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/js/postmonger.js"></script>
-
-    <!-- ✅ Load Custom Activity JavaScript -->
-    <script src="https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/js/customActivity.js"></script>
-
-    <style>
-        body {
-            padding: 20px;
-            font-family: Arial, sans-serif;
-        }
-    </style>
+    <script src="js/postmonger.js"></script>
+    <script src="js/customActivity.js"></script>
 </head>
 <body>
-    <h2>Fax Integration Activity</h2>
-    <p>Configure the fax details for sending in Journey Builder.</p>
-
-    <label for="faxNumber">Fax Number:</label>
-    <input type="text" id="faxNumber" placeholder="+498900000000" />
-
-    <label for="documentUrl">Document URL:</label>
-    <input type="text" id="documentUrl" placeholder="https://example.com/document.pdf" />
-
-    <button id="saveConfig">Save Configuration</button>
-
-    <script>
-        // Ensure the script runs after the page loads
-        $(document).ready(function () {
-            $("#saveConfig").click(function () {
-                alert("Configuration Saved! This will be passed to Journey Builder.");
-            });
-        });
-    </script>
+    <h2>Custom Activity UI</h2>
 </body>
 </html>

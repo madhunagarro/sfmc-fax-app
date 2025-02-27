@@ -1,97 +1,40 @@
 {
-    "workflowApiVersion": "1.1",
-    "metaData": {
-      "icon": "images/icon.png",
-      "category": "message"
+  "workflowApiVersion": "1.1",
+  "metaData": {
+    "icon": "images/icon.png",
+    "category": "custom"
+  },
+  "type": "REST",
+  "lang": {
+    "en-US": {
+      "name": "Send Fax",
+      "description": "Sends a fax via Retarus"
+    }
+  },
+  "arguments": {
+    "execute": {
+      "inArguments": [
+        { "faxNumber": "" },
+        { "documentUrl": "" }
+      ],
+      "outArguments": [],
+      "timeout": 10000,
+      "retryCount": 1
+    }
+  },
+  "configurationArguments": {
+    "publish": {
+      "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/publish"
     },
-    "type": "REST",
-    "lang": {
-      "en-US": {
-        "name": "Send Fax via Retarus",
-        "description": "This activity sends a fax using Retarus API."
-      }
-    },
-    "arguments": {
-      "execute": {
-        "inArguments": [
-          {
-            "faxNumber": "{{Contact.Attribute.FaxNumber}}"
-          },
-          {
-            "documentUrl": "{{Contact.Attribute.DocumentUrl}}"
-          }
-        ],
-        "outArguments": [
-          {
-            "retarusJobId": ""
-          },
-          {
-            "faxStatus": ""
-          }
-        ],
-        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/execute",
-        "timeout": 10000,
-        "retryCount": 1
-      }
-    },
-    "configurationArguments": {
-      "save": {
-        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/save"
-      },
-      "publish": {
-        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/publish"
-      },
-      "validate": {
-        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/validate"
-      },
-      "stop": {
-        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/stop"
-      }
-    },
-    "userInterfaces": {
-      "configModal": {
-        "height": 200,
-        "width": 300,
-        "fullscreen": true
-      }
-    },
-    "schema": {
-      "arguments": {
-        "execute": {
-          "inArguments": [
-            {
-              "faxNumber": {
-                "dataType": "Text",
-                "isNullable": false,
-                "direction": "in"
-              }
-            },
-            {
-              "documentUrl": {
-                "dataType": "Text",
-                "isNullable": false,
-                "direction": "in"
-              }
-            }
-          ],
-          "outArguments": [
-            {
-              "retarusJobId": {
-                "dataType": "Text",
-                "isNullable": true,
-                "direction": "out"
-              }
-            },
-            {
-              "faxStatus": {
-                "dataType": "Text",
-                "isNullable": true,
-                "direction": "out"
-              }
-            }
-          ]
-        }
-      }
+    "validate": {
+      "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/validate"
+    }
+  },
+  "userInterfaces": {
+    "configModal": {
+      "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/index.html",
+      "height": 400,
+      "width": 600
     }
   }
-  
+}
