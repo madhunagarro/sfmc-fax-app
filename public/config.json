@@ -4,7 +4,7 @@
       "icon": "images/icon.png",
       "category": "message"
     },
-    "type": "REST",
+    "type": "FAX",
     "lang": {
       "en-US": {
         "name": "Send Fax via Retarus",
