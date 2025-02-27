@@ -1,0 +1,15 @@
+{
+    "type": "FAX",
+    "name": "Send Fax via Retarus",
+    "schema": {
+      "arguments": {
+        "execute": {
+          "inArguments": [
+            {
+              "faxNumber": "{{Contact.Attribute.FaxNumber}}"
+            }
+          ]
+        }
+      }
+    }
+  }
