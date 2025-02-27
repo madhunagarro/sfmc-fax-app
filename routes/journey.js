@@ -1,31 +1,48 @@
 const express = require('express');
 const axios = require('axios');
-
 const router = express.Router();
 
-// Simulated Validate API
+// Load environment variables
+const RETARUS_API_URL = process.env.RETARUS_API_ENDPOINT;
+const RETARUS_USERNAME = process.env.RETARUS_API_USER;
+const RETARUS_PASSWORD = process.env.RETARUS_API_PASSWORD;
+
+// Encode credentials for Basic Auth
+const encodedCredentials = Buffer.from(`${RETARUS_USERNAME}:${RETARUS_PASSWORD}`).toString('base64');
+
+// Validate API
 router.post('/validate', (req, res) => {
-    res.json({ success: true, message: "Journey activity validated successfully" });
+    res.json({ success: true, message: "Journey validated successfully" });
 });
 
-// Simulated Publish API
+// Publish API
 router.post('/publish', (req, res) => {
-    res.json({ success: true, message: "Journey activity published successfully" });
+    res.json({ success: true, message: "Journey published successfully" });
 });
 
-// Simulated Execute API
+// Execute API (Send Fax)
 router.post('/execute', async (req, res) => {
     try {
-        const { faxNumber, documentUrl } = req.body.inArguments[0];
+        const inArguments = req.body.inArguments;
+        if (!inArguments || inArguments.length === 0) {
+            return res.status(400).json({ success: false, error: "Missing inArguments" });
+        }
+
+        const { faxNumber, documentUrl } = inArguments[0];
 
         if (!faxNumber || !documentUrl) {
             return res.status(400).json({ success: false, error: "Missing required parameters: faxNumber or documentUrl" });
         }
 
-        // Simulated Retarus API call (Replace with actual API)
-        const response = await axios.post('https://api.retarus.com/fax/send', {
-            faxNumber,
-            documentUrl
+        // Call Retarus API
+        const response = await axios.post(RETARUS_API_URL, {
+            recipient: faxNumber,
+            document: documentUrl
+        }, {
+            headers: {
+                'Authorization': `Basic ${encodedCredentials}`,
+                'Content-Type': 'application/json'
+            }
         });
 
         res.json({
@@ -35,6 +52,7 @@ router.post('/execute', async (req, res) => {
         });
 
     } catch (error) {
+        console.error("Retarus API Error:", error.message);
         res.status(500).json({ success: false, error: error.message });
     }
 });
