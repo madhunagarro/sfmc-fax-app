@@ -15,10 +15,10 @@
       "execute": {
         "inArguments": [
           {
-            "faxNumber": "{{Contact.Attribute.Fax_Recipients.FaxNumber}}"
+            "faxNumber": "{{Contact.Attribute.FaxNumber}}"
           },
           {
-            "documentUrl": "{{Contact.Attribute.Fax_Recipients.DocumentURL}}"
+            "documentUrl": "{{Contact.Attribute.DocumentURL}}"
           }
         ],
         "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/execute",
