@@ -8,13 +8,14 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Single endpoint for all requests
+// Execute Endpoint
 app.post('/execute', async (req, res) => {
   try {
     const { faxNumber } = req.body.inArguments[0];
-    const documentData = "JVBERi0xLjcKCjQgMCBvYmoKKElkZW50aXR5KQplbmRvYmoKNSAwIG9iagooQWRvYmUpCmVuZG9iago4IDAgb2JqCjw8Ci9GaWx0ZXIgL0ZsYXRlRGVjb2RlCi9MZW5ndGggMzc4OTYKL0xlbmd0aDEgODc3MzIKL1R5cGUgL1N0cmVhbQo";
+    const documentData = "JVBERi0xLjcKCjQgMCBvYmoKKElkZW50aXR5KQplbmRvYmoKNSAwIG9iagooQWRvYmUpCmVuZG9iago4IDAgb2JqCjw8Ci9GaWx0ZXIgL0ZsYXRlRGVjb2RlCi9MZW5ndGggMzc4OTYKL0xlbmd0aDEgODc3MzIKL1R5cGUgL1N0cmVhbQo"; // Dummy base64 data
 
-    await axios.post(
+    // Send fax via Retarus API
+    const response = await axios.post(
       process.env.RETARUS_API_URL,
       {
         recipients: [{ number: faxNumber }],
@@ -31,7 +32,7 @@ app.post('/execute', async (req, res) => {
       }
     );
 
-    res.status(200).json({ status: "success" });
+    res.status(200).json({ status: "success", jobId: response.data.jobId });
   } catch (error) {
     res.status(500).json({ status: "error", message: error.message });
   }
