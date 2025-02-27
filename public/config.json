@@ -25,6 +25,26 @@
         "verb": "POST",
         "format": "json"
       }
+    },
+    "configurationArguments": {
+      "save": {
+        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/save"
+      },
+      "publish": {
+        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/publish"
+      },
+      "validate": {
+        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/validate"
+      },
+      "stop": {
+        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/stop"
+      }
+    },
+    "userInterfaces": {
+      "configModal": {
+        "height": 200,
+        "width": 300
+      }
     }
   }
   
