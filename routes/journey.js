@@ -58,7 +58,7 @@ router.get('/status/:jobId', async (req, res) => {
     }
 
     try {
-        const response = await axios.get(`${RETARUS_API_ENDPOINT}/${jobId}/status`, {
+        const response = await axios.get(`${RETARUS_API_ENDPOINT}/reports/${jobId}`, {
             auth: {
                 username: RETARUS_API_USER,
                 password: RETARUS_API_PASSWORD
