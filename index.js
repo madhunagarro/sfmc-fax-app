@@ -1,13 +1,19 @@
+require('dotenv').config();
 const express = require('express');
-const path = require('path');
 const axios = require('axios');
 const bodyParser = require('body-parser');
 
 const app = express();
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
-// Configuration Endpoint
+// CORS Middleware
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
+
+// Configuration Endpoint (Auto-called by SFMC)
 app.get('/config.json', (req, res) => {
   res.json({
     "type": "FAX",
@@ -17,27 +23,7 @@ app.get('/config.json', (req, res) => {
         "execute": {
           "inArguments": [
             {
-              "faxNumber": {
-                "dataType": "Text",
-                "isRequired": true,
-                "direction": "in",
-                "access": "visible",
-                "description": "The fax number to send the fax to."
-              },
-              "documentName": {
-                "dataType": "Text",
-                "isRequired": true,
-                "direction": "in",
-                "access": "visible",
-                "description": "The name of the document to send."
-              },
-              "documentData": {
-                "dataType": "Text",
-                "isRequired": true,
-                "direction": "in",
-                "access": "visible",
-                "description": "The base64-encoded content of the document."
-              }
+              "faxNumber": "{{Contact.Attribute.FaxNumber}}" // Direct DE mapping
             }
           ]
         }
@@ -49,11 +35,16 @@ app.get('/config.json', (req, res) => {
 // Execute Endpoint
 app.post('/execute', async (req, res) => {
   try {
-    const { faxNumber, documentName, documentData } = req.body.inArguments[0];
+    // Extract faxNumber from Journey Data Extension
+    const faxNumber = req.body.inArguments[0].faxNumber;
+
+    // Static values from your Apex code
+    const documentName = "faxdocument.pdf";
+    const documentData = "JVBERi0xLjcKCjQgMCBvYmoKKElkZW50aXR5KQplbmRvYmoKNSAwIG9iagooQWRvYmUpCmVuZG9iago4IDAgb2JqCjw8Ci9GaWx0ZXIgL0ZsYXRlRGVjb2RlCi9MZW5ndGggMzc4OTYKL0xlbmd0aDEgODc3MzIKL1R5cGUgL1N0cmVhbQo"; // Your base64 dummy data
 
     // Send fax via Retarus API
     const response = await axios.post(
-      process.env.RETARUS_API_URL,
+      "https://faxws-ha.de.retarus.com/rest/v1/19345/fax",
       {
         recipients: [{ number: faxNumber }],
         documents: [{
@@ -75,6 +66,7 @@ app.post('/execute', async (req, res) => {
     });
 
   } catch (error) {
+    console.error("Fax error:", error.response?.data || error.message);
     res.status(500).json({
       status: "error",
       message: error.response?.data || error.message
