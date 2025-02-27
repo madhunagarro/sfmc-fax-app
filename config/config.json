@@ -1,0 +1,41 @@
+{
+    "workflowApiVersion": "1.1",
+    "metaData": {
+      "icon": "images/fax.png",
+      "category": "message"
+    },
+    "type": "REST",
+    "lang": {
+      "en-US": {
+        "name": "Send Fax via Retarus",
+        "description": "Sends a fax using Retarus Fax API."
+      }
+    },
+    "arguments": {
+      "execute": {
+        "inArguments": [
+          {
+            "faxNumber": "{{Contact.Attribute.FaxNumber}}"
+          },
+          {
+            "documentUrl": "{{Contact.Attribute.DocumentUrl}}"
+          }
+        ],
+        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/execute",
+        "verb": "POST",
+        "format": "json"
+      }
+    },
+    "configurationArguments": {
+      "save": {
+        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/save"
+      },
+      "publish": {
+        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/publish"
+      },
+      "validate": {
+        "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/validate"
+      }
+    }
+  }
+  
