@@ -50,4 +50,32 @@ router.post('/execute', async (req, res) => {
     }
 });
 
+router.get('/status/:jobId', async (req, res) => {
+    const jobId = req.params.jobId;
+
+    if (!jobId) {
+        return res.status(400).json({ success: false, error: "Job ID is required" });
+    }
+
+    try {
+        const response = await axios.get(`${RETARUS_API_ENDPOINT}/${jobId}/status`, {
+            auth: {
+                username: RETARUS_API_USER,
+                password: RETARUS_API_PASSWORD
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Fax status retrieved successfully",
+            status: response.data
+        });
+
+    } catch (error) {
+        console.error("Error fetching fax status:", error.response ? error.response.data : error.message);
+        res.status(500).json({ success: false, error: "Failed to fetch fax status", details: error.message });
+    }
+});
+
+
 module.exports = router;
