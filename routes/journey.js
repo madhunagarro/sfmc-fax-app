@@ -1,40 +1,53 @@
 const express = require('express');
+const axios = require('axios');
 const router = express.Router();
 
-// ✅ Validate API (Called when saving the activity in SFMC)
-router.post('/validate', (req, res) => {
-    console.log('Validation request received:', req.body);
-    res.status(200).json({ success: true, message: "Journey activity validated successfully" });
-});
+const RETARUS_API_USER = process.env.RETARUS_API_USER || 'salesforce@drausbuettel.de';
+const RETARUS_API_PASSWORD = process.env.RETARUS_API_PASSWORD || 'ac5g_AI7M$';
+const RETARUS_API_ENDPOINT = process.env.RETARUS_API_ENDPOINT || 'https://faxws.de1.retarus.com/rest/v1/19345/fax';
 
-// ✅ Publish API (Called when publishing the journey in SFMC)
-router.post('/publish', (req, res) => {
-    console.log('Publish request received:', req.body);
-    res.status(200).json({ success: true, message: "Journey activity published successfully" });
-});
+// ✅ Execute API (Triggered when SFMC runs the journey)
+router.post('/execute', async (req, res) => {
+    console.log('Execute request received:', JSON.stringify(req.body, null, 2));
 
-// ✅ Stop API (Called when stopping the journey)
-router.post('/stop', (req, res) => {
-    console.log('Stop request received:', req.body);
-    res.status(200).json({ success: true, message: "Journey activity stopped successfully" });
-});
+    if (!req.body || !req.body.inArguments || req.body.inArguments.length === 0) {
+        return res.status(400).json({ success: false, error: "No inArguments provided" });
+    }
 
-// ✅ Execute API (Called when the journey activity runs - Sends Fax)
-router.post('/execute', (req, res) => {
-    console.log('Execute request received:', req.body);
+    const { faxNumber, documentUrl } = req.body.inArguments[0];
 
-    const inArguments = req.body.inArguments ? req.body.inArguments[0] : null;
-
-    if (!inArguments || !inArguments.faxNumber || !inArguments.documentUrl) {
+    if (!faxNumber || !documentUrl) {
         return res.status(400).json({ success: false, error: "Missing required parameters: faxNumber or documentUrl" });
     }
 
-    // Simulate API response (Replace with actual Retarus Fax API integration)
-    res.status(200).json({
-        success: true,
-        message: "Fax execution simulated successfully",
-        sentData: inArguments
-    });
+    try {
+        const response = await axios.post(
+            RETARUS_API_ENDPOINT,
+            {
+                recipients: [{ number: faxNumber }],
+                documents: [{ name: "retarusfaxservices.pdf", reference: documentUrl }]
+            },
+            {
+                auth: {
+                    username: RETARUS_API_USER,
+                    password: RETARUS_API_PASSWORD
+                },
+                headers: { 'Content-Type': 'application/json' }
+            }
+        );
+
+        console.log('Retarus API Response:', response.data);
+
+        res.status(200).json({
+            success: true,
+            message: "Fax sent successfully via Retarus",
+            retarusResponse: response.data
+        });
+
+    } catch (error) {
+        console.error("Error sending fax:", error.response ? error.response.data : error.message);
+        res.status(500).json({ success: false, error: "Failed to send fax via Retarus", details: error.message });
+    }
 });
 
 module.exports = router;
