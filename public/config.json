@@ -15,10 +15,10 @@
       "execute": {
         "inArguments": [
           {
-            "faxNumber": "{{Contact.Attribute.FaxNumber}}"
+            "faxNumber": "{{Contact.Attribute.Fax_Recipients.FaxNumber}}"
           },
           {
-            "documentUrl": "{{Contact.Attribute.DocumentUrl}}"
+            "documentUrl": "{{Contact.Attribute.Fax_Recipients.DocumentURL}}"
           }
         ],
         "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/execute",
@@ -38,12 +38,6 @@
       },
       "stop": {
         "url": "https://dra-fax-sfmc-poc-156095430b18.herokuapp.com/journey/stop"
-      }
-    },
-    "userInterfaces": {
-      "configModal": {
-        "height": 200,
-        "width": 300
       }
     }
   }
