@@ -3,7 +3,7 @@ define(["postmonger"], function (Postmonger) {
   
     var connection = new Postmonger.Session();
     var payload = {};
-    var steps = [{ label: "Step 1", key: "step1" }];
+    var steps = [{ label: "Step 1", "key": "step1" }];
     var currentStep = steps[0].key;
   
     $(window).ready(onRender);
