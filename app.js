@@ -1,23 +1,26 @@
 require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const journeyRoutes = require('./routes/journey');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
-app.use(express.static('public'));
 
-// API Routes
-app.use('/journey', journeyRoutes);
+// Serve static files from public/
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Default Route
+// Default route should serve index.html
 app.get('/', (req, res) => {
-    res.send('SFMC Custom Journey Activity - Retarus Fax Integration');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start Server
+// Journey routes
+const journeyRoutes = require('./routes/journey');
+app.use('/journey', journeyRoutes);
+
+// Start the server
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
